@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StockLens — AI Stock Research</title>
+<title>StoxStudy — AI Stock Research</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -518,6 +518,118 @@
     .pros-cons { grid-template-columns: 1fr; }
     .stock-header { flex-direction: column; }
   }
+
+  /* API Key Panel */
+  #api-key-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+  #api-key-panel.hidden { display: none; }
+
+  .api-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .api-panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .api-panel-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    display: inline-block;
+  }
+  .api-panel-title .dot.connected { background: var(--accent); }
+
+  .api-key-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .api-key-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 11px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    letter-spacing: 0.03em;
+    transition: border-color 0.2s;
+  }
+  .api-key-input::placeholder { color: var(--text3); }
+  .api-key-input:focus { border-color: var(--accent); }
+
+  .api-save-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    padding: 11px 20px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .api-save-btn:hover { opacity: 0.85; }
+
+  .api-clear-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 11px 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .api-clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .api-hint {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+  .api-hint a { color: var(--accent2); text-decoration: none; }
+  .api-hint a:hover { text-decoration: underline; }
+
+  .api-connected-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .api-connected-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .api-key-toggle {
+    background: none;
+    border: none;
+    color: var(--text3);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .api-key-toggle:hover { color: var(--text2); background: var(--bg3); }
 </style>
 </head>
 <body>
@@ -528,13 +640,40 @@
   <header>
     <div class="logo">
       <div class="logo-icon">📈</div>
-      <div class="logo-text">Stock<span>Lens</span></div>
+      <div class="logo-text">Stox<span>Study</span></div>
     </div>
     <div style="text-align:right">
       <div class="tagline">AI-Powered Research</div>
       <div style="font-size:12px;color:var(--text3)">Live web intelligence</div>
     </div>
   </header>
+
+  <!-- API Key Panel -->
+  <div id="api-key-panel">
+    <div class="api-panel-head">
+      <div class="api-panel-title">
+        <span class="dot" id="status-dot"></span>
+        <span id="status-label">API Key Required</span>
+      </div>
+      <button class="api-key-toggle" id="toggle-panel-btn" onclick="togglePanel()" style="display:none">Change key</button>
+    </div>
+    <div id="key-entry-area">
+      <div class="api-key-row">
+        <input type="password" class="api-key-input" id="api-key-input" placeholder="sk-ant-api03-..." />
+        <button class="api-save-btn" onclick="saveKey()">Save Key</button>
+      </div>
+      <div class="api-hint">
+        Your key is saved locally in your browser only — never sent anywhere except directly to Anthropic's API.
+        Get a free key at <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a>.
+      </div>
+    </div>
+    <div id="key-connected-area" style="display:none">
+      <div class="api-connected-row">
+        <span class="api-connected-text" id="key-preview"></span>
+        <button class="api-clear-btn" onclick="clearKey()">Remove key</button>
+      </div>
+    </div>
+  </div>
 
   <div class="search-area">
     <div class="search-label">Enter a stock ticker or company name</div>
